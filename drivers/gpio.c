@@ -22,23 +22,46 @@
 #include "gpio.h"
 
 void 
-GPIO_WritePin(GPIO_Port port, uint8_t pin)
+GPIO_WritePin(GPIO_Port port, uint8_t pin, GPIO_PinState state)
 {
-  switch (port)
+  if (state == GPIO_PIN_RESET)
   {
-  case GPIO_PORT_0:
-    WRITE_REG(P0, pin);
-    break;
-  case GPIO_PORT_1:
-    WRITE_REG(P1, pin);
-    break;
-  case GPIO_PORT_2:
-    WRITE_REG(P2, pin);
-    break;
-  case GPIO_PORT_3:
-    WRITE_REG(P3, pin);
-    break;
-  default:
-    break;
+    switch (port)
+    {
+    case GPIO_PORT_0:
+      CLEAR_BIT(P0, pin);
+      break;
+    case GPIO_PORT_1:
+      CLEAR_BIT(P1, pin);
+      break;
+    case GPIO_PORT_2:
+      CLEAR_BIT(P2, pin);
+      break;
+    case GPIO_PORT_3:
+      CLEAR_BIT(P3, pin);
+      break;
+    default:
+      break;
+    }
+  }
+  else
+  {
+    switch (port)
+    {
+    case GPIO_PORT_0:
+      SET_BIT(P0, pin);
+      break;
+    case GPIO_PORT_1:
+      SET_BIT(P1, pin);
+      break;
+    case GPIO_PORT_2:
+      SET_BIT(P2, pin);
+      break;
+    case GPIO_PORT_3:
+      SET_BIT(P3, pin);
+      break;
+    default:
+      break;
+    }
   }
 }
