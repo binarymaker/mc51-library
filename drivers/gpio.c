@@ -21,6 +21,15 @@
 
 #include "gpio.h"
 
+void
+GPIO_PinMode(GPIO_Port port, uint8_t pin, GPIO_Mode mode)
+{
+  if (mode == GPIO_MODE_INPUT)
+  {
+    GPIO_WritePin(port, pin, GPIO_PIN_SET);
+  }
+}
+
 void 
 GPIO_WritePin(GPIO_Port port, uint8_t pin, GPIO_PinState state)
 {
