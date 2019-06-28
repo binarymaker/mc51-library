@@ -55,7 +55,16 @@ typedef enum
   GPIO_PIN_SET
 } GPIO_PinState;
 
+void
+GPIO_PinMode(GPIO_Port port, uint8_t pin, GPIO_Mode mode);
+
 void 
 GPIO_WritePin(GPIO_Port port, uint8_t pin, GPIO_PinState state);
+
+void 
+GPIO_TogglePin(GPIO_Port port, uint8_t pin);
+
+GPIO_PinState 
+GPIO_ReadPin(GPIO_Port port, uint8_t pin);
 
 #endif // MC51_1a3fd298_98bb_11e9_948e_c8ff28b6c6d9

@@ -78,3 +78,56 @@ GPIO_WritePin(GPIO_Port port, uint8_t pin, GPIO_PinState state)
     }
   }
 }
+
+void 
+GPIO_TogglePin(GPIO_Port port, uint8_t pin)
+{
+  switch (port)
+  {
+  case GPIO_PORT_0:
+    P0 = P0 ^ pin;
+    break;
+  case GPIO_PORT_1:
+    P1 = P1 ^ pin;
+    break;
+  case GPIO_PORT_2:
+    P2 = P2 ^ pin;
+    break;
+  case GPIO_PORT_3:
+    P3 = P3 ^ pin;
+    break;
+  default:
+    break;
+  }
+}
+
+GPIO_PinState 
+GPIO_ReadPin(GPIO_Port port, uint8_t pin)
+{
+  GPIO_PinState state;
+    
+  switch (port)
+  {
+  case GPIO_PORT_0:
+    state = P0 & pin;
+    break;
+  case GPIO_PORT_1:
+    state = P1 & pin;
+    break;
+  case GPIO_PORT_2:
+    state = P2 & pin;
+    break;
+  case GPIO_PORT_3:
+    state = P3 & pin;
+    break;
+  default:
+    break;
+  }
+    
+  if (state)
+  {
+    return 1;
+  }
+  
+  return 0;
+}
