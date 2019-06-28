@@ -28,6 +28,10 @@ GPIO_PinMode(GPIO_Port port, uint8_t pin, GPIO_Mode mode)
   {
     GPIO_WritePin(port, pin, GPIO_PIN_SET);
   }
+  else
+  {
+    GPIO_WritePin(port, pin, GPIO_PIN_RESET);
+  }
 }
 
 void 
