@@ -22,5 +22,6 @@
 #ifndef MC51_22e2242e_98bb_11e9_abb7_c8ff28b6c6d9
 #define MC51_22e2242e_98bb_11e9_abb7_c8ff28b6c6d9
 
+#define FOSC 11.059200
 
 #endif // MC51_22e2242e_98bb_11e9_abb7_c8ff28b6c6d9

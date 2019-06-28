@@ -22,9 +22,12 @@
 #ifndef MC51_22e111f6_98bb_11e9_8b11_c8ff28b6c6d9
 #define MC51_22e111f6_98bb_11e9_8b11_c8ff28b6c6d9
 
-#include "REG52.h"
+#include "mc51-library-cfg.h"
 
+#include "REG52.h"
 #include "stdint.h"
+#include <intrins.h>
+
 #include "gpio.h"
 
 #define SET_BIT(REG, BIT) ((REG) |= (BIT))
@@ -36,5 +39,12 @@
 #define MODIFY_REG(REG, CLEARMASK, SETMASK) WRITE_REG((REG), (((READ_REG(REG)) & \
                                                                (~(CLEARMASK))) | \
                                                               (SETMASK)))
+
+#define MACHINE_CYCLE (float)(FOSC / 12.00)
+
+
+void _delay_us(uint32_t time_us);
+
+void _delay_ms(uint32_t time_ms);
 
 #endif // MC51_22e111f6_98bb_11e9_8b11_c8ff28b6c6d9

@@ -18,3 +18,30 @@
   * Written by Binary Maker <https://github.com/binarymaker>
   ******************************************************************************
   */
+
+#include "mc51-library.h"
+#include "mc51-library-cfg.h"
+
+void _delay_us(uint32_t time_us)
+{
+  uint32_t wait_time;
+  
+  wait_time = time_us / 120;
+  while(wait_time--)
+  {
+    _nop_();
+  }
+}
+
+void _delay_ms(uint32_t time_ms)
+{
+  uint32_t wait_time;
+  
+  wait_time = MACHINE_CYCLE * time_ms;
+  while(wait_time--)
+  {
+    _delay_us(1000);
+  }
+}
+
+
