@@ -37,8 +37,8 @@
 /* flags for display entry mode */
 #define CHARLCD_ENTRYRIGHT          0x00
 #define CHARLCD_ENTRYLEFT           0x02
-#define CHARLCD_ENTRYSHIFTINCREMENT 0x01
-#define CHARLCD_ENTRYSHIFTDECREMENT 0x00
+#define CHARLCD_ENTRYSHIFTRIGHT     0x01
+#define CHARLCD_ENTRYSHIFTLEFT      0x00
 
 /* flags for display on/off control */
 #define CHARLCD_DISPLAYON           0x04
@@ -82,9 +82,9 @@ typedef struct
   GPIO_Pin_t enable_pin;
   GPIO_Pin_t data_pin[4];
 
-  uint8_t displayfunction;
-  uint8_t displaycontrol;
-  uint8_t displaymode;
+  uint8_t reg_functionSet;
+  uint8_t reg_displayControl;
+  uint8_t reg_modeSet;
 }CHARLCD_t;
 
 void
@@ -95,5 +95,11 @@ CHARLCD_Command(CHARLCD_t *context, uint8_t cmd);
 
 void
 CHARLCD_Data(CHARLCD_t *context, uint8_t cmd);
+
+void
+CHARLCD_Write(CHARLCD_t *context, uint8_t ch);
+
+void
+CHARLCD_PrintString(CHARLCD_t *context, char *msg);
 
 #endif // MC51_83e9ed30_9a17_11e9_b28f_c8ff28b6c6d9

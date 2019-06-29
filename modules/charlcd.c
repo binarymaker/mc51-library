@@ -40,23 +40,47 @@ CHARLCD_init(CHARLCD_t *context)
                  GPIO_MODE_OUTPUT);
   }
 
-  CHARLCD_Command(context, 0x03);
-  _delay_ms(50);
-  CHARLCD_Command(context, 0x03);
-  _delay_ms(110);
-  CHARLCD_Command(context, 0x03);
-  CHARLCD_Command(context, 0x02);
-  CHARLCD_Command(context, 0x02);
-  CHARLCD_Command(context, 0x08);
-  CHARLCD_Command(context, 0x00);
-  CHARLCD_Command(context, 0x0C);
-  CHARLCD_Command(context, 0x00);
-  CHARLCD_Command(context, 0x06);
-  CHARLCD_Command(context, 0x01);
+  /* Init sequnce as per datasheet */
   _delay_ms(100);
+  CHARLCD_Write(context, 0x03);
+  _delay_ms(5);
+  CHARLCD_Write(context, 0x03);
+  _delay_us(100);
+  CHARLCD_Write(context, 0x03);
+  _delay_us(100);
+  CHARLCD_Write(context, 0x02);
   
-  CHARLCD_Command(context, 0x80);
-  CHARLCD_Data(context, 'A');
+  /* Function set config ------------------------------------------------- */
+  context->reg_functionSet = CHARLCD_FUNCTIONSET | CHARLCD_4BITMODE |
+                             CHARLCD_5x8DOTS;
+  
+  if (context->size_type != CHARLCD_TYPE_16X1)
+  {
+    context->reg_functionSet |= CHARLCD_2LINE;
+  }
+  else
+  {
+    context->reg_functionSet |= CHARLCD_1LINE;
+  }
+  
+  CHARLCD_Command(context, context->reg_functionSet);
+  
+  /* Display control config ----------------------------------------------- */
+  
+  context->reg_displayControl = CHARLCD_DISPLAYCONTROL | CHARLCD_DISPLAYON |
+                                CHARLCD_CURSOROFF | CHARLCD_BLINKOFF;
+  
+  CHARLCD_Command(context, context->reg_displayControl);
+
+  /* Clear display -------------------------------------------------------- */
+  CHARLCD_Command(context, CHARLCD_CLEARDISPLAY);
+  _delay_ms(10);
+  
+  /* Entry mode / cursor increment config --------------------------------- */
+  context->reg_modeSet = CHARLCD_ENTRYMODESET | CHARLCD_ENTRYLEFT | 
+                          CHARLCD_ENTRYSHIFTLEFT;
+  
+  CHARLCD_Command(context, context->reg_modeSet);
 }
 
 void
@@ -77,50 +101,59 @@ void
 CHARLCD_Write(CHARLCD_t *context, uint8_t ch)
 {
   uint8_t i;
-  uint8_t lsb;
-  uint8_t msb;
-  
-  lsb = ch & 0x0F;
-  msb = (ch >> 4) & 0x0F;
 
-  /* MSB 4bit send */
   for (i = 0; i < 4; i++)
   {
     GPIO_WritePin(context->data_pin[i].port,
                   context->data_pin[i].pin,
-                  (msb >> i) & 0x01);
+                  (ch >> i) & 0x01);
   }
   
   CHARLCD_EnablePulse(context);
-
-  /* LSB 4bit send */
-  for (i = 0; i < 4; i++)
-  {
-    GPIO_WritePin(context->data_pin[i].port,
-                  context->data_pin[i].pin,
-                  (lsb >> i) & 0x01);
-  }
-  
-  CHARLCD_EnablePulse(context);
-
 }
 
 void
 CHARLCD_Command(CHARLCD_t *context, uint8_t cmd)
 {
+  uint8_t msb;
+  uint8_t lsb;
+  
   GPIO_WritePin(context->regSelect_pin.port,
                 context->regSelect_pin.pin,
                 GPIO_PIN_RESET);
 
-  CHARLCD_Write(context, cmd);
+  msb = (cmd >> 4) & 0x0F;
+  lsb = cmd  & 0x0F;
+  
+  CHARLCD_Write(context, msb);
+  CHARLCD_Write(context, lsb);
 }
 
 void
 CHARLCD_Data(CHARLCD_t *context, uint8_t cmd)
 {
+  uint8_t msb;
+  uint8_t lsb;
+  
   GPIO_WritePin(context->regSelect_pin.port,
                 context->regSelect_pin.pin,
                 GPIO_PIN_SET);
 
-  CHARLCD_Write(context, cmd);
+  msb = (cmd >> 4) & 0x0F;
+  lsb = cmd  & 0x0F;
+  
+  CHARLCD_Write(context, msb);
+  CHARLCD_Write(context, lsb);
+}
+
+void
+CHARLCD_PrintString(CHARLCD_t *context, char *msg)
+{
+  uint16_t i = 0;
+  
+  while (msg[i] != '\0')
+  {
+    CHARLCD_Data(context, (uint8_t)msg[i]);
+    i++;
+  }
 }
