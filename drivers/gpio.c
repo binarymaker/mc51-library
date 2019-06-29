@@ -22,7 +22,7 @@
 #include "gpio.h"
 
 void
-GPIO_PinMode(GPIO_Port port, uint8_t pin, GPIO_Mode mode)
+GPIO_ModePin(GPIO_Port port, uint8_t pin, GPIO_Mode mode)
 {
   if (mode == GPIO_MODE_INPUT)
   {

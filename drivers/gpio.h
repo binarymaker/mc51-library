@@ -55,8 +55,14 @@ typedef enum
   GPIO_PIN_SET
 } GPIO_PinState;
 
+typedef struct GPIO_Pin_s
+{
+  GPIO_Port port;
+  uint8_t pin; 
+}GPIO_Pin_t;
+
 void
-GPIO_PinMode(GPIO_Port port, uint8_t pin, GPIO_Mode mode);
+GPIO_ModePin(GPIO_Port port, uint8_t pin, GPIO_Mode mode);
 
 void 
 GPIO_WritePin(GPIO_Port port, uint8_t pin, GPIO_PinState state);
