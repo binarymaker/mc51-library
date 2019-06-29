@@ -24,6 +24,44 @@
 
 #include "mc51-library.h"
 
+/* commands */
+#define CHARLCD_CLEARDISPLAY        0x01
+#define CHARLCD_RETURNHOME          0x02
+#define CHARLCD_ENTRYMODESET        0x04
+#define CHARLCD_DISPLAYCONTROL      0x08
+#define CHARLCD_CURSORSHIFT         0x10
+#define CHARLCD_FUNCTIONSET         0x20
+#define CHARLCD_SETCGRAMADDR        0x40
+#define CHARLCD_SETDDRAMADDR        0x80
+
+/* flags for display entry mode */
+#define CHARLCD_ENTRYRIGHT          0x00
+#define CHARLCD_ENTRYLEFT           0x02
+#define CHARLCD_ENTRYSHIFTINCREMENT 0x01
+#define CHARLCD_ENTRYSHIFTDECREMENT 0x00
+
+/* flags for display on/off control */
+#define CHARLCD_DISPLAYON           0x04
+#define CHARLCD_DISPLAYOFF          0x00
+#define CHARLCD_CURSORON            0x02
+#define CHARLCD_CURSOROFF           0x00
+#define CHARLCD_BLINKON             0x01
+#define CHARLCD_BLINKOFF            0x00
+
+/* flags for display/cursor shift */
+#define CHARLCD_DISPLAYMOVE         0x08
+#define CHARLCD_CURSORMOVE          0x00
+#define CHARLCD_MOVERIGHT           0x04
+#define CHARLCD_MOVELEFT            0x00
+
+/* flags for function set */
+#define CHARLCD_8BITMODE            0x10
+#define CHARLCD_4BITMODE            0x00
+#define CHARLCD_2LINE               0x08
+#define CHARLCD_1LINE               0x00
+#define CHARLCD_5x10DOTS            0x04
+#define CHARLCD_5x8DOTS             0x00
+
 typedef enum
 {
   CHARLCD_TYPE_16X1 = 0U,
@@ -31,16 +69,31 @@ typedef enum
   CHARLCD_TYPE_16X4
 }CHARLCD_Type;
 
+typedef enum
+{
+  CHARLCD_CMD = 0U,
+  CHARLCD_DATA
+};
+
 typedef struct
 {
   CHARLCD_Type size_type;
   GPIO_Pin_t regSelect_pin;
   GPIO_Pin_t enable_pin;
   GPIO_Pin_t data_pin[4];
+
+  uint8_t displayfunction;
+  uint8_t displaycontrol;
+  uint8_t displaymode;
 }CHARLCD_t;
 
 void
 CHARLCD_init(CHARLCD_t *context);
 
+void
+CHARLCD_Command(CHARLCD_t *context, uint8_t cmd);
+
+void
+CHARLCD_Data(CHARLCD_t *context, uint8_t cmd);
 
 #endif // MC51_83e9ed30_9a17_11e9_b28f_c8ff28b6c6d9

@@ -39,4 +39,88 @@ CHARLCD_init(CHARLCD_t *context)
                  context->data_pin[i].pin,
                  GPIO_MODE_OUTPUT);
   }
+
+  CHARLCD_Command(context, 0x03);
+  _delay_ms(50);
+  CHARLCD_Command(context, 0x03);
+  _delay_ms(110);
+  CHARLCD_Command(context, 0x03);
+  CHARLCD_Command(context, 0x02);
+  CHARLCD_Command(context, 0x02);
+  CHARLCD_Command(context, 0x08);
+  CHARLCD_Command(context, 0x00);
+  CHARLCD_Command(context, 0x0C);
+  CHARLCD_Command(context, 0x00);
+  CHARLCD_Command(context, 0x06);
+  CHARLCD_Command(context, 0x01);
+  _delay_ms(100);
+  
+  CHARLCD_Command(context, 0x80);
+  CHARLCD_Data(context, 'A');
+}
+
+void
+CHARLCD_EnablePulse(CHARLCD_t *context)
+{
+  GPIO_WritePin(context->enable_pin.port,
+                context->enable_pin.pin,
+                GPIO_PIN_SET);
+  
+  _delay_ms(5);
+
+  GPIO_WritePin(context->enable_pin.port,
+                context->enable_pin.pin,
+                GPIO_PIN_RESET);
+}
+
+void
+CHARLCD_Write(CHARLCD_t *context, uint8_t ch)
+{
+  uint8_t i;
+  uint8_t lsb;
+  uint8_t msb;
+  
+  lsb = ch & 0x0F;
+  msb = (ch >> 4) & 0x0F;
+
+  /* MSB 4bit send */
+  for (i = 0; i < 4; i++)
+  {
+    GPIO_WritePin(context->data_pin[i].port,
+                  context->data_pin[i].pin,
+                  (msb >> i) & 0x01);
+  }
+  
+  CHARLCD_EnablePulse(context);
+
+  /* LSB 4bit send */
+  for (i = 0; i < 4; i++)
+  {
+    GPIO_WritePin(context->data_pin[i].port,
+                  context->data_pin[i].pin,
+                  (lsb >> i) & 0x01);
+  }
+  
+  CHARLCD_EnablePulse(context);
+
+}
+
+void
+CHARLCD_Command(CHARLCD_t *context, uint8_t cmd)
+{
+  GPIO_WritePin(context->regSelect_pin.port,
+                context->regSelect_pin.pin,
+                GPIO_PIN_RESET);
+
+  CHARLCD_Write(context, cmd);
+}
+
+void
+CHARLCD_Data(CHARLCD_t *context, uint8_t cmd)
+{
+  GPIO_WritePin(context->regSelect_pin.port,
+                context->regSelect_pin.pin,
+                GPIO_PIN_SET);
+
+  CHARLCD_Write(context, cmd);
 }
