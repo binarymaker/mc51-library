@@ -21,9 +21,14 @@
 #include "charlcd.h"
 
 void
-CHARLCD_init(CHARLCD_t *context)
+CHARLCD_init(CHARLCD_t *context, uint8_t line, uint8_t col)
 {
   uint8_t i;
+  
+  context->row_offset[0] = 0x00;
+  context->row_offset[1] = 0x40;
+  context->row_offset[3] = col;
+  context->row_offset[4] = 0x40 + col;
   
   GPIO_ModePin(context->regSelect_pin.port,
                context->regSelect_pin.pin,
@@ -41,20 +46,20 @@ CHARLCD_init(CHARLCD_t *context)
   }
 
   /* Init sequnce as per datasheet */
-  _delay_ms(100);
+  _delay_ms(100);                   /* 100ms wait for display stable */
   CHARLCD_Write(context, 0x03);
-  _delay_ms(5);
+  _delay_ms(5);                     /* 4.1ms wait */
   CHARLCD_Write(context, 0x03);
-  _delay_us(100);
+  _delay_us(100);                   /* 100us wait */
   CHARLCD_Write(context, 0x03);
-  _delay_us(100);
+  _delay_us(100);                   /* 100us wait */
   CHARLCD_Write(context, 0x02);
   
   /* Function set config ------------------------------------------------- */
   context->reg_functionSet = CHARLCD_FUNCTIONSET | CHARLCD_4BITMODE |
                              CHARLCD_5x8DOTS;
   
-  if (context->size_type != CHARLCD_TYPE_16X1)
+  if (line > 0x01)
   {
     context->reg_functionSet |= CHARLCD_2LINE;
   }
@@ -90,7 +95,7 @@ CHARLCD_EnablePulse(CHARLCD_t *context)
                 context->enable_pin.pin,
                 GPIO_PIN_SET);
   
-  _delay_ms(5);
+  _delay_us(100);
 
   GPIO_WritePin(context->enable_pin.port,
                 context->enable_pin.pin,
@@ -147,6 +152,11 @@ CHARLCD_Data(CHARLCD_t *context, uint8_t cmd)
 }
 
 void
+CHARLCD_SetCursor(CHARLCD_t *context, uint8_t line, uint8_t col){
+  CHARLCD_Command(context , CHARLCD_SETDDRAMADDR | (context->row_offset[line] + col));
+}
+
+void
 CHARLCD_PrintString(CHARLCD_t *context, char *msg)
 {
   uint16_t i = 0;
@@ -156,4 +166,10 @@ CHARLCD_PrintString(CHARLCD_t *context, char *msg)
     CHARLCD_Data(context, (uint8_t)msg[i]);
     i++;
   }
+}
+
+void
+CHARLCD_PrintInteger(CHARLCD_t *context, uint8_t line, uint8_t col)
+{
+  _delay_ms(1);
 }

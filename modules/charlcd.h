@@ -64,20 +64,12 @@
 
 typedef enum
 {
-  CHARLCD_TYPE_16X1 = 0U,
-  CHARLCD_TYPE_16X2,
-  CHARLCD_TYPE_16X4
-}CHARLCD_Type;
-
-typedef enum
-{
   CHARLCD_CMD = 0U,
   CHARLCD_DATA
 };
 
 typedef struct
 {
-  CHARLCD_Type size_type;
   GPIO_Pin_t regSelect_pin;
   GPIO_Pin_t enable_pin;
   GPIO_Pin_t data_pin[4];
@@ -85,10 +77,12 @@ typedef struct
   uint8_t reg_functionSet;
   uint8_t reg_displayControl;
   uint8_t reg_modeSet;
+  
+  uint8_t row_offset[4];
 }CHARLCD_t;
 
 void
-CHARLCD_init(CHARLCD_t *context);
+CHARLCD_init(CHARLCD_t *context, uint8_t line, uint8_t col);
 
 void
 CHARLCD_Command(CHARLCD_t *context, uint8_t cmd);
@@ -100,6 +94,11 @@ void
 CHARLCD_Write(CHARLCD_t *context, uint8_t ch);
 
 void
+CHARLCD_SetCursor(CHARLCD_t *context, uint8_t line, uint8_t col);
+
+void
 CHARLCD_PrintString(CHARLCD_t *context, char *msg);
 
+void
+CHARLCD_PrintInteger(CHARLCD_t *context, uint8_t line, uint8_t col);
 #endif // MC51_83e9ed30_9a17_11e9_b28f_c8ff28b6c6d9
