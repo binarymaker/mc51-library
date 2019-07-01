@@ -97,6 +97,30 @@ void
 CHARLCD_SetCursor(CHARLCD_t *context, uint8_t line, uint8_t col);
 
 void
+CHARLCD_Clear(CHARLCD_t *context);
+
+void
+CHARLCD_Home(CHARLCD_t *context);
+
+void
+CHARLCD_Display(CHARLCD_t *context, uint8_t enable);
+
+void
+CHARLCD_Cursor(CHARLCD_t *context, uint8_t enable);
+
+void
+CHARLCD_CursorBlink(CHARLCD_t *context, uint8_t enable);
+
+void
+CHARLCD_ScrollDisplayLeft(CHARLCD_t *context);
+
+void
+CHARLCD_ScrollDisplayRight(CHARLCD_t *context);
+
+void
+CHARLCD_PrintRightToLeft(CHARLCD_t *context);
+
+void
 CHARLCD_PrintString(CHARLCD_t *context, char *msg);
 
 void

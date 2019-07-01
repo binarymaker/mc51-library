@@ -88,6 +88,7 @@ CHARLCD_init(CHARLCD_t *context, uint8_t line, uint8_t col)
   CHARLCD_Command(context, context->reg_modeSet);
 }
 
+/* Low level commands ----------------------------------------------------- */
 void
 CHARLCD_EnablePulse(CHARLCD_t *context)
 {
@@ -150,10 +151,90 @@ CHARLCD_Data(CHARLCD_t *context, uint8_t cmd)
   CHARLCD_Write(context, msb);
   CHARLCD_Write(context, lsb);
 }
-
+/* High level commands ----------------------------------------------------- */
 void
 CHARLCD_SetCursor(CHARLCD_t *context, uint8_t line, uint8_t col){
-  CHARLCD_Command(context , CHARLCD_SETDDRAMADDR | (context->row_offset[line] + col));
+  CHARLCD_Command(context , CHARLCD_SETDDRAMADDR | 
+                  (context->row_offset[line] + col));
+}
+
+void
+CHARLCD_Clear(CHARLCD_t *context)
+{
+  CHARLCD_Command(context, CHARLCD_CLEARDISPLAY);
+  _delay_ms(2);
+}
+
+void
+CHARLCD_Home(CHARLCD_t *context)
+{
+  CHARLCD_Command(context, CHARLCD_RETURNHOME);
+  _delay_ms(2);
+}
+
+void
+CHARLCD_Display(CHARLCD_t *context, uint8_t enable)
+{
+  if (enable == DISABLE)
+  {
+    CLEAR_BIT(context->reg_displayControl, CHARLCD_DISPLAYON);
+  }
+  else
+  {
+    SET_BIT(context->reg_displayControl, CHARLCD_DISPLAYON);
+  }
+  
+  CHARLCD_Command(context, context->reg_displayControl);
+}
+
+void
+CHARLCD_Cursor(CHARLCD_t *context, uint8_t enable)
+{
+  if (enable == DISABLE)
+  {
+    CLEAR_BIT(context->reg_displayControl, CHARLCD_CURSORON);
+  }
+  else
+  {
+    SET_BIT(context->reg_displayControl, CHARLCD_CURSORON);
+  }
+  
+  CHARLCD_Command(context, context->reg_displayControl);
+}
+
+void
+CHARLCD_CursorBlink(CHARLCD_t *context, uint8_t enable)
+{
+  if (enable == DISABLE)
+  {
+    CLEAR_BIT(context->reg_displayControl, CHARLCD_BLINKON);
+  }
+  else
+  {
+    SET_BIT(context->reg_displayControl, CHARLCD_BLINKON);
+  }
+  CHARLCD_Command(context, context->reg_displayControl);
+}
+
+void
+CHARLCD_ScrollDisplayLeft(CHARLCD_t *context)
+{
+  CHARLCD_Command(context, CHARLCD_CURSORSHIFT | CHARLCD_DISPLAYMOVE | 
+                  CHARLCD_MOVELEFT);
+}
+
+void
+CHARLCD_ScrollDisplayRight(CHARLCD_t *context)
+{
+  CHARLCD_Command(context, CHARLCD_CURSORSHIFT | 
+                  CHARLCD_DISPLAYMOVE | CHARLCD_MOVERIGHT);
+}
+
+void
+CHARLCD_PrintRightToLeft(CHARLCD_t *context)
+{
+  CLEAR_BIT(context->reg_displayControl, CHARLCD_ENTRYLEFT);
+  CHARLCD_Command(context, context->reg_displayControl);
 }
 
 void

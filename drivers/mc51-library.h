@@ -40,6 +40,12 @@
                                                                (~(CLEARMASK))) | \
                                                               (SETMASK)))
 
+typedef enum
+{
+  DISABLE = 0U,
+  ENABLE
+};
+
 #define MACHINE_CYCLE (float)(FOSC / 12.00)
 
 
